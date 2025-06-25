@@ -50,7 +50,7 @@
             </column>
             <column name="full_name" type="TEXT"/>
             <column name="date_of_birth" type="DATE"/>
-            <column name="desired_salary" type="NUMERIC"/>
+            <column name="desired_salary" type="INTEGER"/>
             <column name="desired_currency" type="CHAR(3)"/>
             <column name="location_city" type="TEXT"/>
             <column name="about_me" type="TEXT"/>
@@ -69,7 +69,9 @@
             <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="name" type="TEXT"/>
+            <column name="name" type="TEXT">
+                <constraints nullable="false" unique="true"/>
+            </column>
             <column name="description" type="TEXT"/>
             <column name="phone" type="TEXT"/>
             <column name="logo_url" type="TEXT"/>
