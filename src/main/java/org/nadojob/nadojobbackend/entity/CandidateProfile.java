@@ -50,7 +50,7 @@ public class CandidateProfile {
     private Date dateOfBirth;
 
     @Column(name = "desired_salary")
-    private BigDecimal desiredSalary;
+    private Integer desiredSalary;
 
     @Enumerated(EnumType.STRING)
     private Currency desiredCurrency;

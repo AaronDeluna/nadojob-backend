@@ -51,13 +51,13 @@ public class JobPost {
     private String locationCity;
 
     @Column(name = "compensation_from")
-    private Double compensationFrom;
+    private Integer compensationFrom;
 
     @Column(name = "compensation_to")
-    private Double compensationTo;
+    private Integer compensationTo;
 
-    @Column(length = 3)
-    private String currency;
+    @Enumerated(EnumType.STRING)
+    private Currency currency;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

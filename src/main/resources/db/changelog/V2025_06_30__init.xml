@@ -141,8 +141,8 @@
             <column name="title" type="TEXT"/>
             <column name="description" type="TEXT"/>
             <column name="location_city" type="TEXT"/>
-            <column name="compensation_from" type="NUMERIC"/>
-            <column name="compensation_to" type="NUMERIC"/>
+            <column name="compensation_from" type="INTEGER"/>
+            <column name="compensation_to" type="INTEGER"/>
             <column name="currency" type="CHAR(3)"/>
             <column name="status" type="job_post_status" defaultValue="OPEN"/>
             <column name="image_urls" type="JSONB"/>
