@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+      http://www.liquibase.org/xml/ns/dbchangelog
+      https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.15.xsd">
+
+    <changeSet id="2025-06-30-init" author="ivan">
+
+        <!-- ENUM-ы -->
+        <sql>CREATE TYPE user_role AS ENUM ('CANDIDATE','EMPLOYER','ADMIN');</sql>
+        <sql>CREATE TYPE company_invite_status AS ENUM ('PENDING','ACCEPTED','DECLINED','EXPIRED');</sql>
+        <sql>CREATE TYPE job_post_status AS ENUM ('OPEN','CLOSED','BLOCKED');</sql>
+        <sql>CREATE TYPE application_status AS ENUM ('NEW','IN_REVIEW','REJECTED','ACCEPTED');</sql>
+        <sql>CREATE TYPE penalty_target_type AS ENUM ('COMPANY','VACANCY');</sql>
+        <sql>CREATE TYPE penalty_code AS ENUM ('NO_REPLY','UNJUST_REJECT','SYSTEM_IGNORE');</sql>
+        <sql>CREATE TYPE subscription_plan AS ENUM ('FREE','BASIC','PRO','ENTERPRISE');</sql>
+        <sql>CREATE TYPE subscription_status AS ENUM ('ACTIVE','CANCELED','EXPIRED');</sql>
+
+        <!-- users -->
+        <createTable tableName="users">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="role" type="user_role"/>
+            <column name="email" type="TEXT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="hashed_password" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone" type="TEXT"/>
+            <column name="is_blocked" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="now()"/>
+            <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="now()"/>
+        </createTable>
+
+        <!-- candidate_profiles -->
+        <createTable tableName="candidate_profiles">
+            <column name="user_id" type="UUID">
+                <constraints primaryKey="true" nullable="false"
+                             referencedTableName="users"
+                             referencedColumnNames="id"
+                             foreignKeyName="fk_candidate_user"
+                             deleteCascade="true"/>
+            </column>
+            <column name="full_name" type="TEXT"/>
+            <column name="date_of_birth" type="DATE"/>
+            <column name="desired_salary" type="INTEGER"/>
+            <column name="desired_currency" type="CHAR(3)"/>
+            <column name="location_city" type="TEXT"/>
+            <column name="about_me" type="TEXT"/>
+            <column name="avatar_url" type="TEXT"/>
+            <column name="skills" type="JSONB"/>
+            <column name="languages" type="JSONB"/>
+            <column name="work_experience" type="JSONB"/>
+            <column name="education" type="JSONB"/>
+            <column name="contacts_extra" type="JSONB"/>
+            <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="now()"/>
+            <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="now()"/>
+        </createTable>
+
+        <!-- companies -->
+        <createTable tableName="companies">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="TEXT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="phone" type="TEXT"/>
+            <column name="logo_url" type="TEXT"/>
+            <column name="cover_url" type="TEXT"/>
+            <column name="rating" type="NUMERIC(3,2)" defaultValueNumeric="5.00"/>
+            <column name="is_blocked" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="now()"/>
+        </createTable>
+
+        <!-- company_users -->
+        <createTable tableName="company_users">
+            <column name="user_id" type="UUID">
+                <constraints nullable="false"
+                             referencedTableName="users"
+                             referencedColumnNames="id"
+                             foreignKeyName="fk_company_users_user"/>
+            </column>
+            <column name="company_id" type="UUID">
+                <constraints nullable="false"
+                             referencedTableName="companies"
+                             referencedColumnNames="id"
+                             foreignKeyName="fk_company_users_company"/>
+            </column>
+            <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="now()"/>
+        </createTable>
+
+        <addPrimaryKey tableName="company_users"
+                       constraintName="pk_company_users"
+                       columnNames="user_id,company_id"/>
+
+        <!-- company_invites -->
+        <createTable tableName="company_invites">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="company_id" type="UUID">
+                <constraints nullable="false"
+                             referencedTableName="companies"
+                             referencedColumnNames="id"
+                             foreignKeyName="fk_invite_company"/>
+            </column>
+            <column name="email" type="TEXT"/>
+            <column name="role_in_company" type="TEXT"/>
+            <column name="invited_by_user_id" type="UUID">
+                <constraints nullable="false"
+                             referencedTableName="users"
+                             referencedColumnNames="id"
+                             foreignKeyName="fk_invite_user"/>
+            </column>
+            <column name="token" type="TEXT"/>
+            <column name="status" type="company_invite_status"/>
+            <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="now()"/>
+            <column name="expires_at" type="TIMESTAMPTZ"/>
+        </createTable>
+
+        <!-- job_posts -->
+        <createTable tableName="job_posts">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="company_id" type="UUID">
+                <constraints nullable="false"
+                             referencedTableName="companies"
+                             referencedColumnNames="id"
+                             foreignKeyName="fk_job_company"/>
+            </column>
+            <column name="title" type="TEXT"/>
+            <column name="description" type="TEXT"/>
+            <column name="location_city" type="TEXT"/>
+            <column name="compensation_from" type="INTEGER"/>
+            <column name="compensation_to" type="INTEGER"/>
+            <column name="currency" type="CHAR(3)"/>
+            <column name="status" type="job_post_status" defaultValue="OPEN"/>
+            <column name="image_urls" type="JSONB"/>
+            <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="now()"/>
+            <column name="deadline_at" type="TIMESTAMPTZ"/>
+            <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="now()"/>
+        </createTable>
+
+        <!-- Индексы -->
+        <sql>CREATE INDEX IF NOT EXISTS idx_profiles_skills
+            ON candidate_profiles USING GIN (skills);</sql>
+        <sql>CREATE INDEX IF NOT EXISTS idx_profiles_languages
+            ON candidate_profiles USING GIN (languages);</sql>
+        <sql>CREATE INDEX IF NOT EXISTS idx_job_images
+            ON job_posts USING GIN (image_urls);</sql>
+        <sql>CREATE INDEX IF NOT EXISTS idx_job_created_brin
+            ON job_posts USING BRIN (created_at);</sql>
+
+        <!-- Rollback -->
+        <rollback>
+            <sql>DROP TABLE IF EXISTS job_posts, company_invites, company_users,
+                companies, candidate_profiles, users CASCADE;
+            </sql>
+            <sql>DROP TYPE IF EXISTS user_role, company_invite_status, job_post_status,
+                application_status, penalty_target_type, penalty_code,
+                subscription_plan, subscription_status;
+            </sql>
+        </rollback>
+
+    </changeSet>
+</databaseChangeLog>

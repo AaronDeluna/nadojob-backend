@@ -1,3 +1,9 @@
 server:
   port: 8080
 
+spring:
+  datasource:
+    name: nadojob_db
+    password: ivanmilovanov
+    url: jdbc:postgresql://localhost:5432/nadojob_db
+    driver-class-name: org.postgresql.Driver
