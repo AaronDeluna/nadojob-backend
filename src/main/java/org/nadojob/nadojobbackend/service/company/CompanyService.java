@@ -2,10 +2,8 @@ package org.nadojob.nadojobbackend.service.company;
 
 import lombok.RequiredArgsConstructor;
 import org.nadojob.nadojobbackend.dto.CompanyCreationDto;
-import org.nadojob.nadojobbackend.dto.auth.employer.EmployerRegistrationRequestDto;
 import org.nadojob.nadojobbackend.entity.Company;
 import org.nadojob.nadojobbackend.exception.CompanyNameAlreadyExistsException;
-import org.nadojob.nadojobbackend.exception.EmailAlreadyExistsException;
 import org.nadojob.nadojobbackend.mapper.CompanyMapper;
 import org.nadojob.nadojobbackend.repository.CompanyRepository;
 import org.springframework.stereotype.Service;
