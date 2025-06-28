@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.nadojob.nadojobbackend.entity.User;
 import org.nadojob.nadojobbackend.exception.EmailAlreadyExistsException;
 import org.nadojob.nadojobbackend.exception.PasswordNotCorrectException;
+import org.nadojob.nadojobbackend.exception.PhoneAlreadyExistsException;
 import org.nadojob.nadojobbackend.exception.UserBlockedException;
 import org.nadojob.nadojobbackend.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,6 +26,18 @@ public class UserValidator {
     public void checkIfBlocked(User user) {
         if (user.getIsBlocked()) {
             throw new UserBlockedException("Ваш аккаунт заблокирован");
+        }
+    }
+
+    public void validateEmailDuplicate(String email) {
+        if (userRepository.existsByEmail(email)) {
+            throw new EmailAlreadyExistsException("Пользователь с такой почтой уже зарегистрирован");
+        }
+    }
+
+    public void validatePhoneDuplicate(String phone) {
+        if (userRepository.existsByPhone(phone)) {
+            throw new PhoneAlreadyExistsException("Пользователь с таким номером уже зарегистрирован");
         }
     }
 

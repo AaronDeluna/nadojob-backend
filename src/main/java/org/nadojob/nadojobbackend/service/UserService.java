@@ -5,11 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.nadojob.nadojobbackend.dto.auth.candidate.CandidateRegistrationRequestDto;
 import org.nadojob.nadojobbackend.dto.auth.employer.EmployerRegistrationRequestDto;
 import org.nadojob.nadojobbackend.entity.User;
-import org.nadojob.nadojobbackend.exception.EmailAlreadyExistsException;
-import org.nadojob.nadojobbackend.exception.PhoneAlreadyExistsException;
 import org.nadojob.nadojobbackend.exception.UserNotFoundException;
 import org.nadojob.nadojobbackend.mapper.UserMapper;
 import org.nadojob.nadojobbackend.repository.UserRepository;
+import org.nadojob.nadojobbackend.validation.UserValidator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,15 +20,16 @@ public class UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final UserValidator userValidator;
 
     public User createCandidate(CandidateRegistrationRequestDto dto) {
-        validateEmailDuplicate(dto.getEmail());
+        userValidator.validateEmailDuplicate(dto.getEmail());
         return userRepository.save(userMapper.toCandidateEntity(dto, passwordEncoder));
     }
 
     public User createEmployer(EmployerRegistrationRequestDto dto) {
-        validateEmailDuplicate(dto.getEmail());
-        validatePhoneDuplicate(dto.getPhone());
+        userValidator.validateEmailDuplicate(dto.getEmail());
+        userValidator.validatePhoneDuplicate(dto.getPhone());
         return userRepository.save(userMapper.toEmployerEntity(dto, passwordEncoder));
     }
 
@@ -37,18 +37,6 @@ public class UserService {
         return userRepository.findByEmail(email).orElseThrow(
                 () -> new UserNotFoundException("Почта указана неверно или не существует")
         );
-    }
-
-    private void validateEmailDuplicate(String email) {
-        if (userRepository.existsByEmail(email)) {
-            throw new EmailAlreadyExistsException("Пользователь с такой почтой уже зарегистрирован");
-        }
-    }
-
-    private void validatePhoneDuplicate(String phone) {
-        if (userRepository.existsByPhone(phone)) {
-            throw new PhoneAlreadyExistsException("Пользователь с таким номером уже зарегистрирован");
-        }
     }
 
 }
