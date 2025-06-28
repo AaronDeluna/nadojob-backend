@@ -23,17 +23,18 @@
             <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="role" type="user_role"/>
+            <column name="role" type="user_role">
+                <constraints nullable="false"/>
+            </column>
             <column name="email" type="TEXT">
                 <constraints nullable="false" unique="true"/>
             </column>
             <column name="hashed_password" type="TEXT">
                 <constraints nullable="false"/>
             </column>
-            <column name="first_name" type="TEXT">
-                <constraints nullable="false"/>
+            <column name="phone" type="TEXT">
+                <constraints unique="true"/>
             </column>
-            <column name="phone" type="TEXT"/>
             <column name="is_blocked" type="BOOLEAN" defaultValueBoolean="false"/>
             <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="now()"/>
             <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="now()"/>
