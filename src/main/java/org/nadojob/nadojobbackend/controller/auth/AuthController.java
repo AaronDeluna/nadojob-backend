@@ -1,5 +1,6 @@
 package org.nadojob.nadojobbackend.controller.auth;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.nadojob.nadojobbackend.dto.auth.AuthenticationResponseDto;
 import org.nadojob.nadojobbackend.dto.auth.LoginRequestDto;
@@ -21,19 +22,19 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponseDto> login(@RequestBody LoginRequestDto dto) {
+    public ResponseEntity<AuthenticationResponseDto> login(@RequestBody @Valid LoginRequestDto dto) {
         return ResponseEntity.ok(authService.login(dto));
     }
 
     @PostMapping("/candidate")
     public ResponseEntity<AuthenticationResponseDto> registrationCandidate(
-            @RequestBody CandidateRegistrationRequestDto dto) {
+            @RequestBody @Valid CandidateRegistrationRequestDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.registerCandidate(dto));
     }
 
     @PostMapping("/employer")
     public ResponseEntity<AuthenticationResponseDto> registrationEmployer(
-            @RequestBody EmployerRegistrationRequestDto dto) {
+            @RequestBody @Valid EmployerRegistrationRequestDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.registerEmployer(dto));
     }
 

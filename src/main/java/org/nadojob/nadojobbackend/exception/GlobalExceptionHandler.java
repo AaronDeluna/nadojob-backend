@@ -14,41 +14,24 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({
-            EntityNotFoundException.class
-    })
-    public ResponseEntity<ErrorResponseDto> handleNotFoundException(Exception e) {
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorResponseDto> handleEntityNotFound(EntityNotFoundException e) {
+        log.warn("Entity not found: {}", e.getMessage());
         return buildErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
     @ExceptionHandler({
             EmailAlreadyExistsException.class,
-            PhoneAlreadyExistsException.class
+            PhoneAlreadyExistsException.class,
+            CompanyNameAlreadyExistsException.class
     })
-    public ResponseEntity<ErrorResponseDto> handleEntityAlreadyExistException(Exception e) {
-        log.warn(e.getMessage());
+    public ResponseEntity<ErrorResponseDto> handleAlreadyExists(RuntimeException e) {
+        log.warn("Conflict: {}", e.getMessage());
         return buildErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
-//    @ExceptionHandler({
-//            InvalidVerificationCodeException.class
-//    })
-//    public ResponseEntity<ErrorResponseDto> handleInvalidException(Exception e) {
-//        return buildErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
-//    }
-
-    @ExceptionHandler({
-            RuntimeException.class
-    })
-    public ResponseEntity<ErrorResponseDto> handleRuntimeException(Exception e) {
-        log.warn(e.getMessage());
-        return buildErrorResponse(HttpStatus.BAD_REQUEST, "Возникла проблемма пр работе");
-    }
-
-    @ExceptionHandler({
-            UserBlockedException.class
-    })
-    public ResponseEntity<ErrorResponseDto> handleBlockedAccount(Exception e) {
+    @ExceptionHandler(UserBlockedException.class)
+    public ResponseEntity<ErrorResponseDto> handleUserBlocked(UserBlockedException e) {
         return buildErrorResponse(HttpStatus.FORBIDDEN, e.getMessage());
     }
 
@@ -56,62 +39,46 @@ public class GlobalExceptionHandler {
             JwtAuthenticationException.class,
             PasswordNotCorrectException.class
     })
-    public ResponseEntity<ErrorResponseDto> handleAuthenticationException(Exception e) {
+    public ResponseEntity<ErrorResponseDto> handleAuthErrors(RuntimeException e) {
         return buildErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
     }
 
-//    @ExceptionHandler({
-//            DuplicateNameException.class,
-//            DuplicateEmailException.class,
-//            DuplicateCompanyNameException.class
-//    })
-//    public ResponseEntity<ErrorResponseDto> handleDuplicateNameException(Exception e) {
-//        return buildErrorResponse(HttpStatus.CONFLICT, e.getMessage());
-//    }
-
-    @ExceptionHandler(StackOverflowError.class)
-    public ResponseEntity<ErrorResponseDto> handleStackOverflowError(Exception e) {
-        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponseDto> handleIllegalArgumentException(Exception e) {
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ErrorResponseDto> handleValidation(ValidationException e) {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
-//    @ExceptionHandler({
-//            AppointmentConflictException.class,
-//            EmailNotVerifiedException.class
-//    })
-//    public ResponseEntity<ErrorResponseDto> handleConflictException(Exception e) {
-//        return buildErrorResponse(HttpStatus.CONFLICT, e.getMessage());
-//    }
-
-    @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<ErrorResponseDto> handleValidationException(Exception e) {
-        return buildErrorResponse(HttpStatus.CONFLICT, e.getMessage());
-    }
-
-//    @ExceptionHandler(OutOfWorkingHoursException.class)
-//    public ResponseEntity<ErrorResponseDto> handleHoursException(Exception e) {
-//        return buildErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
-//    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public final ResponseEntity<ErrorResponseDto> handlerMethodArgumentExceptions(MethodArgumentNotValidException e) {
+    public ResponseEntity<ErrorResponseDto> handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
         String message = e.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .map(err -> err.getField() + ": " + err.getDefaultMessage())
                 .findFirst()
                 .orElse("Некорректные данные");
 
         return buildErrorResponse(HttpStatus.BAD_REQUEST, message);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponseDto> handleIllegalArgument(IllegalArgumentException e) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(StackOverflowError.class)
+    public ResponseEntity<ErrorResponseDto> handleStackOverflow(StackOverflowError e) {
+        log.error("Critical: Stack overflow", e);
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Внутренняя ошибка сервера");
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponseDto> handleUnexpected(Exception e) {
+        log.error("Unexpected error: ", e);
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Произошла непредвиденная ошибка");
+    }
+
     private ResponseEntity<ErrorResponseDto> buildErrorResponse(HttpStatus status, String message) {
-        return ResponseEntity
-                .status(status)
-                .body(new ErrorResponseDto(status.value(), status.name(), message));
+        return ResponseEntity.status(status)
+                .body(new ErrorResponseDto(status.value(), status.getReasonPhrase(), message));
     }
 }
