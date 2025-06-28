@@ -2,17 +2,20 @@ package org.nadojob.nadojobbackend.service.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.nadojob.nadojobbackend.dto.auth.AuthenticationResponseDto;
-import org.nadojob.nadojobbackend.dto.auth.candidate.CandidateLoginRequestDto;
+import org.nadojob.nadojobbackend.dto.auth.LoginRequestDto;
 import org.nadojob.nadojobbackend.dto.auth.candidate.CandidateRegistrationRequestDto;
 import org.nadojob.nadojobbackend.dto.auth.employer.EmployerRegistrationRequestDto;
+import org.nadojob.nadojobbackend.entity.Company;
 import org.nadojob.nadojobbackend.entity.User;
 import org.nadojob.nadojobbackend.exception.PasswordNotCorrectException;
 import org.nadojob.nadojobbackend.exception.UserNotFoundException;
 import org.nadojob.nadojobbackend.repository.UserRepository;
 import org.nadojob.nadojobbackend.service.CompanyService;
+import org.nadojob.nadojobbackend.service.CompanyUserService;
 import org.nadojob.nadojobbackend.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,16 +23,12 @@ public class AuthService {
 
     private final UserService userService;
     private final CompanyService companyService;
+    private final CompanyUserService companyUserService;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
-    public AuthenticationResponseDto registerCandidate(CandidateRegistrationRequestDto dto) {
-        User user = userService.createCandidate(dto);
-        return generateTokenResponse(user);
-    }
-
-    public AuthenticationResponseDto loginCandidate(CandidateLoginRequestDto dto) {
+    public AuthenticationResponseDto login(LoginRequestDto dto) {
         User user = userRepository.findByEmail(dto.getEmail()).orElseThrow(
                 () -> new UserNotFoundException("Почта указана не врено или не сущестует")
         );
@@ -37,9 +36,16 @@ public class AuthService {
         return generateTokenResponse(user);
     }
 
+    public AuthenticationResponseDto registerCandidate(CandidateRegistrationRequestDto dto) {
+        User user = userService.createCandidate(dto);
+        return generateTokenResponse(user);
+    }
+
+    @Transactional
     public AuthenticationResponseDto registerEmployer(EmployerRegistrationRequestDto dto) {
         User employer = userService.createEmployer(dto);
-        companyService.create(dto, employer);
+        Company company = companyService.create(dto);
+        companyUserService.create(company, employer);
         return generateTokenResponse(employer);
     }
 

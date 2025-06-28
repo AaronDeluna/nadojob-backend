@@ -1,10 +1,8 @@
-package org.nadojob.nadojobbackend.controller;
+package org.nadojob.nadojobbackend.controller.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.nadojob.nadojobbackend.dto.auth.AuthenticationResponseDto;
-import org.nadojob.nadojobbackend.dto.auth.candidate.CandidateRegistrationRequestDto;
 import org.nadojob.nadojobbackend.dto.auth.employer.EmployerRegistrationRequestDto;
-import org.nadojob.nadojobbackend.service.UserService;
 import org.nadojob.nadojobbackend.service.auth.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

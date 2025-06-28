@@ -1,8 +1,7 @@
-package org.nadojob.nadojobbackend.controller;
+package org.nadojob.nadojobbackend.controller.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.nadojob.nadojobbackend.dto.auth.AuthenticationResponseDto;
-import org.nadojob.nadojobbackend.dto.auth.candidate.CandidateLoginRequestDto;
 import org.nadojob.nadojobbackend.dto.auth.candidate.CandidateRegistrationRequestDto;
 import org.nadojob.nadojobbackend.service.auth.AuthService;
 import org.springframework.http.HttpStatus;
@@ -22,11 +21,6 @@ public class CandidateAuthController {
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponseDto> registration(@RequestBody CandidateRegistrationRequestDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.registerCandidate(dto));
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponseDto> login(@RequestBody CandidateLoginRequestDto dto) {
-        return ResponseEntity.ok(authService.loginCandidate(dto));
     }
 
 }
