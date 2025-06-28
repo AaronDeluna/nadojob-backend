@@ -2,6 +2,7 @@ package org.nadojob.nadojobbackend.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
+import org.nadojob.nadojobbackend.dto.UserDto;
 import org.nadojob.nadojobbackend.dto.auth.candidate.CandidateRegistrationRequestDto;
 import org.nadojob.nadojobbackend.dto.auth.employer.EmployerRegistrationRequestDto;
 import org.nadojob.nadojobbackend.entity.User;
@@ -11,9 +12,11 @@ import static org.nadojob.nadojobbackend.entity.UserRole.CANDIDATE;
 import static org.nadojob.nadojobbackend.entity.UserRole.EMPLOYER;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
-public interface UserMapper {
+public abstract class UserMapper {
 
-    default User toCandidateEntity(CandidateRegistrationRequestDto dto, PasswordEncoder passwordEncoder) {
+    public abstract UserDto toDto(User entity);
+
+    public User toCandidateEntity(CandidateRegistrationRequestDto dto, PasswordEncoder passwordEncoder) {
         User user = new User();
         user.setEmail(dto.getEmail().trim().toLowerCase());
         user.setHashedPassword(passwordEncoder.encode(dto.getPassword()));
@@ -22,7 +25,7 @@ public interface UserMapper {
         return user;
     }
 
-    default User toEmployerEntity(EmployerRegistrationRequestDto dto, PasswordEncoder passwordEncoder) {
+    public User toEmployerEntity(EmployerRegistrationRequestDto dto, PasswordEncoder passwordEncoder) {
         User user = new User();
         user.setEmail(dto.getEmail().trim().toLowerCase());
         user.setHashedPassword(passwordEncoder.encode(dto.getPassword()));

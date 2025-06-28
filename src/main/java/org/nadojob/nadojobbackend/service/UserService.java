@@ -6,6 +6,7 @@ import org.nadojob.nadojobbackend.dto.auth.candidate.CandidateRegistrationReques
 import org.nadojob.nadojobbackend.dto.auth.employer.EmployerRegistrationRequestDto;
 import org.nadojob.nadojobbackend.entity.User;
 import org.nadojob.nadojobbackend.exception.EmailAlreadyExistsException;
+import org.nadojob.nadojobbackend.exception.UserNotFoundException;
 import org.nadojob.nadojobbackend.mapper.UserMapper;
 import org.nadojob.nadojobbackend.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,6 +29,12 @@ public class UserService {
     public User createEmployer(EmployerRegistrationRequestDto dto) {
         validateEmailDuplicate(dto.getEmail());
         return userRepository.save(userMapper.toEmployerEntity(dto, passwordEncoder));
+    }
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> new UserNotFoundException("Почта указана неверно или не существует")
+        );
     }
 
     private void validateEmailDuplicate(String email) {

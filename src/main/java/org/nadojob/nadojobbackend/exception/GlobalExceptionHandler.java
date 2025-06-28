@@ -41,7 +41,14 @@ public class GlobalExceptionHandler {
     })
     public ResponseEntity<ErrorResponseDto> handleRuntimeException(Exception e) {
         log.warn(e.getMessage());
-        return buildErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, "Возникла проблемма пр работе");
+    }
+
+    @ExceptionHandler({
+            UserBlockedException.class
+    })
+    public ResponseEntity<ErrorResponseDto> handleBlockedAccount(Exception e) {
+        return buildErrorResponse(HttpStatus.FORBIDDEN, e.getMessage());
     }
 
     @ExceptionHandler({
