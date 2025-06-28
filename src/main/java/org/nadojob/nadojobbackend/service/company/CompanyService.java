@@ -1,4 +1,4 @@
-package org.nadojob.nadojobbackend.service;
+package org.nadojob.nadojobbackend.service.company;
 
 import lombok.RequiredArgsConstructor;
 import org.nadojob.nadojobbackend.dto.auth.employer.EmployerRegistrationRequestDto;
