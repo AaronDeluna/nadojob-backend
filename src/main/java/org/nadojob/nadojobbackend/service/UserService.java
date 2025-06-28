@@ -6,6 +6,7 @@ import org.nadojob.nadojobbackend.dto.auth.candidate.CandidateRegistrationReques
 import org.nadojob.nadojobbackend.dto.auth.employer.EmployerRegistrationRequestDto;
 import org.nadojob.nadojobbackend.entity.User;
 import org.nadojob.nadojobbackend.exception.EmailAlreadyExistsException;
+import org.nadojob.nadojobbackend.exception.PhoneAlreadyExistsException;
 import org.nadojob.nadojobbackend.exception.UserNotFoundException;
 import org.nadojob.nadojobbackend.mapper.UserMapper;
 import org.nadojob.nadojobbackend.repository.UserRepository;
@@ -28,6 +29,7 @@ public class UserService {
 
     public User createEmployer(EmployerRegistrationRequestDto dto) {
         validateEmailDuplicate(dto.getEmail());
+        validatePhoneDuplicate(dto.getPhone());
         return userRepository.save(userMapper.toEmployerEntity(dto, passwordEncoder));
     }
 
@@ -40,6 +42,12 @@ public class UserService {
     private void validateEmailDuplicate(String email) {
         if (userRepository.existsByEmail(email)) {
             throw new EmailAlreadyExistsException("Пользователь с такой почтой уже зарегистрирован");
+        }
+    }
+
+    private void validatePhoneDuplicate(String phone) {
+        if (userRepository.existsByPhone(phone)) {
+            throw new PhoneAlreadyExistsException("Пользователь с таким номером уже зарегистрирован");
         }
     }
 

@@ -5,6 +5,7 @@ import org.nadojob.nadojobbackend.dto.auth.employer.EmployerRegistrationRequestD
 import org.nadojob.nadojobbackend.entity.Company;
 import org.nadojob.nadojobbackend.entity.User;
 import org.nadojob.nadojobbackend.service.UserService;
+import org.nadojob.nadojobbackend.validation.UserValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

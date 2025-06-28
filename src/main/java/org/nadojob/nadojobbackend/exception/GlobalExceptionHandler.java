@@ -23,6 +23,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({
             EmailAlreadyExistsException.class,
+            PhoneAlreadyExistsException.class
     })
     public ResponseEntity<ErrorResponseDto> handleEntityAlreadyExistException(Exception e) {
         log.warn(e.getMessage());
