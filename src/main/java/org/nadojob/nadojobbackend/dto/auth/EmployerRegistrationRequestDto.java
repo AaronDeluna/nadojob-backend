@@ -1,4 +1,4 @@
-package org.nadojob.nadojobbackend.dto.auth.employer;
+package org.nadojob.nadojobbackend.dto.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

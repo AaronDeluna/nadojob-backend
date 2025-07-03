@@ -42,13 +42,16 @@
 
         <!-- candidate_profiles -->
         <createTable tableName="candidate_profiles">
-            <column name="user_id" type="UUID">
-                <constraints primaryKey="true" nullable="false"
-                             referencedTableName="users"
-                             referencedColumnNames="id"
-                             foreignKeyName="fk_candidate_user"
-                             deleteCascade="true"/>
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
             </column>
+            <column name="user_id" type="UUID">
+                <constraints nullable="false"
+                             foreignKeyName="fk_candidate_user"
+                             referencedTableName="users"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="title" type="TEXT"/>
             <column name="full_name" type="TEXT"/>
             <column name="date_of_birth" type="DATE"/>
             <column name="desired_salary" type="INTEGER"/>

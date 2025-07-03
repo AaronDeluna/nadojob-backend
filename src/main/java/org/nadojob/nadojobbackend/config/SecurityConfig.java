@@ -36,6 +36,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private static final long CORS_MAX_AGE_SECONDS = 3600L;
     private final JwtFilter jwtFilter;
     private final CustomUserDetailsService userService;
     private final CustomAccessDeniedHandler accessDeniedHandler;
@@ -87,7 +88,7 @@ public class SecurityConfig {
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("Authorization")); // если нужно возвращать заголовки
         config.setAllowCredentials(true);
-        config.setMaxAge(3600L);
+        config.setMaxAge(CORS_MAX_AGE_SECONDS);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
@@ -103,4 +104,5 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
 }

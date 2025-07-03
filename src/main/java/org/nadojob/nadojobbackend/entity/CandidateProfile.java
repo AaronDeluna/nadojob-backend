@@ -1,14 +1,15 @@
 package org.nadojob.nadojobbackend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.vladmihalcea.hibernate.type.json.JsonType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.ForeignKey;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.MapsId;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -16,9 +17,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
+import org.nadojob.nadojobbackend.dto.candidate_profile.EducationDto;
+import org.nadojob.nadojobbackend.dto.candidate_profile.LanguageDto;
+import org.nadojob.nadojobbackend.dto.candidate_profile.WorkExperienceDto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Entity
@@ -30,23 +37,20 @@ import java.util.UUID;
 public class CandidateProfile {
 
     @Id
-    @Column(name = "user_id")
-    private UUID userId;
+    private UUID id;
 
-    @OneToOne
-    @MapsId
-    @JoinColumn(
-            name = "user_id",
-            referencedColumnName = "id",
-            foreignKey = @ForeignKey(name = "fk_candidate_user")
-    )
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
+
+    private String title;
 
     @Column(name = "full_name")
     private String fullName;
 
     @Column(name = "date_of_birth")
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
 
     @Column(name = "desired_salary")
     private Integer desiredSalary;
@@ -63,20 +67,25 @@ public class CandidateProfile {
     @Column(name = "avatar_url")
     private String avatarUrl;
 
+    @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
-    private String skills;
+    private List<String> skills;
 
+    @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
-    private String languages;
+    private List<LanguageDto> languages;
 
-    @Column(name = "work_experience", columnDefinition = "jsonb")
-    private String workExperience;
-
+    @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
-    private String education;
+    private List<WorkExperienceDto> workExperience;
 
-    @Column(name = "contacts_extra", columnDefinition = "jsonb")
-    private String contactsExtra;
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
+    private List<EducationDto> education;
+
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
+    private Map<String, String> contactsExtra;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -87,12 +96,16 @@ public class CandidateProfile {
     @PrePersist
     public void prePersist() {
         LocalDateTime now = LocalDateTime.now();
-        createdAt = now;
-        updatedAt = now;
+        this.createdAt = now;
+        this.updatedAt = now;
+        if (this.id == null) {
+            this.id = UUID.randomUUID();
+        }
     }
 
     @PreUpdate
     public void preUpdate() {
-        updatedAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 }
+

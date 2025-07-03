@@ -2,9 +2,9 @@ package org.nadojob.nadojobbackend.service.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.nadojob.nadojobbackend.dto.auth.AuthenticationResponseDto;
+import org.nadojob.nadojobbackend.dto.auth.CandidateRegistrationRequestDto;
+import org.nadojob.nadojobbackend.dto.auth.EmployerRegistrationRequestDto;
 import org.nadojob.nadojobbackend.dto.auth.LoginRequestDto;
-import org.nadojob.nadojobbackend.dto.auth.candidate.CandidateRegistrationRequestDto;
-import org.nadojob.nadojobbackend.dto.auth.employer.EmployerRegistrationRequestDto;
 import org.nadojob.nadojobbackend.entity.User;
 import org.nadojob.nadojobbackend.service.UserService;
 import org.nadojob.nadojobbackend.service.company.CompanyRegistrationService;

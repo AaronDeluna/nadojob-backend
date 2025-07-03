@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.nadojob.nadojobbackend.dto.ErrorResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -14,8 +15,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ErrorResponseDto> handleEntityNotFound(EntityNotFoundException e) {
+    @ExceptionHandler({
+            EntityNotFoundException.class,
+            CandidateProfileNotFoundException.class
+    })
+    public ResponseEntity<ErrorResponseDto> handleEntityNotFound(RuntimeException e) {
         log.warn("Entity not found: {}", e.getMessage());
         return buildErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
     }
@@ -23,7 +27,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             EmailAlreadyExistsException.class,
             PhoneAlreadyExistsException.class,
-            CompanyNameAlreadyExistsException.class
+            CompanyNameAlreadyExistsException.class,
+            ProfileTitleAlreadyExistsException.class
     })
     public ResponseEntity<ErrorResponseDto> handleAlreadyExists(RuntimeException e) {
         log.warn("Conflict: {}", e.getMessage());
@@ -40,6 +45,7 @@ public class GlobalExceptionHandler {
             PasswordNotCorrectException.class
     })
     public ResponseEntity<ErrorResponseDto> handleAuthErrors(RuntimeException e) {
+        log.warn(e.getMessage());
         return buildErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
     }
 
@@ -74,7 +80,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleUnexpected(Exception e) {
         log.error("Unexpected error: ", e);
-        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Произошла непредвиденная ошибка");
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponseDto> handleAccessDenied(AccessDeniedException e) {
+        log.warn("Access denied: {}", e.getMessage());
+        return buildErrorResponse(HttpStatus.FORBIDDEN, "Доступ запрещён");
     }
 
     private ResponseEntity<ErrorResponseDto> buildErrorResponse(HttpStatus status, String message) {

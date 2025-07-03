@@ -2,8 +2,8 @@ package org.nadojob.nadojobbackend.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.nadojob.nadojobbackend.dto.auth.candidate.CandidateRegistrationRequestDto;
-import org.nadojob.nadojobbackend.dto.auth.employer.EmployerRegistrationRequestDto;
+import org.nadojob.nadojobbackend.dto.auth.CandidateRegistrationRequestDto;
+import org.nadojob.nadojobbackend.dto.auth.EmployerRegistrationRequestDto;
 import org.nadojob.nadojobbackend.entity.User;
 import org.nadojob.nadojobbackend.exception.UserNotFoundException;
 import org.nadojob.nadojobbackend.mapper.UserMapper;
