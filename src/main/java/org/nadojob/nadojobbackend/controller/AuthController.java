@@ -1,11 +1,11 @@
-package org.nadojob.nadojobbackend.controller.auth;
+package org.nadojob.nadojobbackend.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.nadojob.nadojobbackend.dto.auth.AuthenticationResponseDto;
+import org.nadojob.nadojobbackend.dto.auth.CandidateRegistrationRequestDto;
+import org.nadojob.nadojobbackend.dto.auth.EmployerRegistrationRequestDto;
 import org.nadojob.nadojobbackend.dto.auth.LoginRequestDto;
-import org.nadojob.nadojobbackend.dto.auth.candidate.CandidateRegistrationRequestDto;
-import org.nadojob.nadojobbackend.dto.auth.employer.EmployerRegistrationRequestDto;
 import org.nadojob.nadojobbackend.service.auth.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

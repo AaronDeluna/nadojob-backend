@@ -3,8 +3,8 @@ package org.nadojob.nadojobbackend.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.nadojob.nadojobbackend.dto.UserDto;
-import org.nadojob.nadojobbackend.dto.auth.candidate.CandidateRegistrationRequestDto;
-import org.nadojob.nadojobbackend.dto.auth.employer.EmployerRegistrationRequestDto;
+import org.nadojob.nadojobbackend.dto.auth.CandidateRegistrationRequestDto;
+import org.nadojob.nadojobbackend.dto.auth.EmployerRegistrationRequestDto;
 import org.nadojob.nadojobbackend.entity.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

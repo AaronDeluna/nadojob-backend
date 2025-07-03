@@ -5,7 +5,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.nadojob.nadojobbackend.dto.CompanyCreationDto;
-import org.nadojob.nadojobbackend.dto.auth.employer.EmployerRegistrationRequestDto;
+import org.nadojob.nadojobbackend.dto.auth.EmployerRegistrationRequestDto;
 import org.nadojob.nadojobbackend.entity.Company;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)

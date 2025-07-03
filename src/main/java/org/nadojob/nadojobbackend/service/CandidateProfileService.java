@@ -22,6 +22,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CandidateProfileService {
 
+    public static final String PROFILE_NOT_FOUND = "Резюме не найдено";
     private final CandidateProfileRepository candidateProfileRepository;
     private final UserRepository userRepository;
     private final CandidateProfileMapper candidateProfileMapper;
@@ -45,7 +46,7 @@ public class CandidateProfileService {
 
     public CandidateProfileResponseDto findById(UUID id) {
         CandidateProfile candidateProfile = candidateProfileRepository.findById(id).orElseThrow(
-                () -> new CandidateProfileNotFoundException(String.format("Резюме с id: '%s' не найдено", id))
+                () -> new CandidateProfileNotFoundException(PROFILE_NOT_FOUND)
         );
         return candidateProfileMapper.toResponseDto(candidateProfile);
     }
@@ -53,7 +54,7 @@ public class CandidateProfileService {
     @Transactional
     public CandidateProfileResponseDto updateById(UUID id, CandidateProfileUpdateDto dto) {
         CandidateProfile candidateProfile = candidateProfileRepository.findById(id).orElseThrow(
-                () -> new CandidateProfileNotFoundException(String.format("Резюме с id: '%s' не найдено", id))
+                () -> new CandidateProfileNotFoundException(PROFILE_NOT_FOUND)
         );
         candidateProfileValidator.validateTitleUniqueness(dto.getTitle(), candidateProfile.getUser().getId());
         candidateProfileMapper.update(candidateProfile, dto);
@@ -63,7 +64,7 @@ public class CandidateProfileService {
     @Transactional
     public void deleteById(UUID id) {
         if (!candidateProfileRepository.existsById(id)) {
-            throw new CandidateProfileNotFoundException(String.format("Резюме с id: '%s' не найдено", id));
+            throw new CandidateProfileNotFoundException(PROFILE_NOT_FOUND);
         }
         candidateProfileRepository.deleteById(id);
     }
