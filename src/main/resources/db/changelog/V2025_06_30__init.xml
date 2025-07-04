@@ -81,8 +81,20 @@
             <column name="logo_url" type="TEXT"/>
             <column name="cover_url" type="TEXT"/>
             <column name="rating" type="NUMERIC(3,2)" defaultValueNumeric="5.00"/>
+            <column name="created_by_user_id" type="UUID">
+                <constraints nullable="false"
+                             referencedTableName="users"
+                             referencedColumnNames="id"
+                             foreignKeyName="fk_company_owner"/>
+            </column>
+            <column name="is_verified" type="BOOLEAN" defaultValueBoolean="false"/>
             <column name="is_blocked" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="country" type="TEXT"/>
+            <column name="region" type="TEXT"/>
+            <column name="city" type="TEXT"/>
+            <column name="street" type="TEXT"/>
             <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="now()"/>
+            <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="now()"/>
         </createTable>
 
         <!-- company_users -->

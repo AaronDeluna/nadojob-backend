@@ -21,7 +21,7 @@ public class CompanyRegistrationService {
     @Transactional
     public User registerCompanyWithOwner(EmployerRegistrationRequestDto dto) {
         User user = userService.createEmployer(dto);
-        Company company = companyService.create(companyMapper.toCreationDto(dto));
+        Company company = companyService.create(companyMapper.toCreationDto(dto), user);
         companyUserService.create(company, user);
         return user;
     }

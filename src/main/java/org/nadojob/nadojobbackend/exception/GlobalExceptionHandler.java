@@ -17,7 +17,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({
             EntityNotFoundException.class,
-            CandidateProfileNotFoundException.class
+            CandidateProfileNotFoundException.class,
+            CompanyNotFoundException.class
     })
     public ResponseEntity<ErrorResponseDto> handleEntityNotFound(RuntimeException e) {
         log.warn("Entity not found: {}", e.getMessage());
