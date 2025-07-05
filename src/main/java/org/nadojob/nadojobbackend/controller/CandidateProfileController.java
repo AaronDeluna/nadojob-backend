@@ -42,7 +42,7 @@ public class CandidateProfileController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('CANDIDATE', 'ADMIN', 'EMPLOYER')")
+    @PreAuthorize("hasAnyRole('CANDIDATE', 'ADMIN', 'EMPLOYER', 'COMPANY_OWNER')")
     public ResponseEntity<CandidateProfileResponseDto> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(candidateProfileService.findById(id));
     }

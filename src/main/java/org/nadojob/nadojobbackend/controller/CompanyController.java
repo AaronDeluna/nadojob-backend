@@ -7,9 +7,11 @@ import org.nadojob.nadojobbackend.dto.company.CompanyUpdateDto;
 import org.nadojob.nadojobbackend.entity.User;
 import org.nadojob.nadojobbackend.service.company.CompanyService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,12 +20,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
+import static org.springframework.http.HttpStatus.CREATED;
+
 @RestController
 @RequestMapping("/api/companies")
 @RequiredArgsConstructor
 public class CompanyController {
 
     private final CompanyService companyService;
+
+    @PostMapping("/invite")
+    @PreAuthorize("hasAnyRole('ADMIN','COMPANY_OWNER')")
+    public ResponseEntity<String> inviteUserByEmail(@RequestParam String email,
+                                                    @AuthenticationPrincipal User principal) {
+        return ResponseEntity.status(CREATED).body(companyService.inviteUserByEmail(email, principal.getId()));
+    }
 
     @GetMapping
     public ResponseEntity<PageDto<CompanyResponseDto>> getAll(@RequestParam(defaultValue = "10") Integer pageSize,
@@ -43,7 +54,7 @@ public class CompanyController {
 
     @PutMapping("/me")
     public ResponseEntity<CompanyResponseDto> updateByCurrentUser(@RequestBody CompanyUpdateDto dto,
-                                                     @AuthenticationPrincipal User principal) {
+                                                                  @AuthenticationPrincipal User principal) {
         return ResponseEntity.ok(companyService.updateByCurrentUser(dto, principal.getId()));
     }
 

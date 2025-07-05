@@ -1,6 +1,9 @@
 package org.nadojob.nadojobbackend.dto.company;
 
 import lombok.Data;
+import org.nadojob.nadojobbackend.entity.Sector;
+
+import java.util.List;
 
 @Data
 public class CompanyUpdateDto {
@@ -13,5 +16,6 @@ public class CompanyUpdateDto {
     private String region;
     private String city;
     private String street;
+    private List<String> sectors;
 
 }

@@ -1,7 +1,9 @@
 package org.nadojob.nadojobbackend.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import org.nadojob.nadojobbackend.dto.user.UserCreationDto;
 import org.nadojob.nadojobbackend.dto.user.UserDto;
 import org.nadojob.nadojobbackend.dto.auth.CandidateRegistrationRequestDto;
 import org.nadojob.nadojobbackend.dto.auth.EmployerRegistrationRequestDto;
@@ -9,12 +11,22 @@ import org.nadojob.nadojobbackend.entity.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.nadojob.nadojobbackend.entity.UserRole.CANDIDATE;
+import static org.nadojob.nadojobbackend.entity.UserRole.COMPANY_OWNER;
 import static org.nadojob.nadojobbackend.entity.UserRole.EMPLOYER;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public abstract class UserMapper {
 
     public abstract UserDto toDto(User entity);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "role", source = "userRole")
+    @Mapping(target = "hashedPassword", ignore = true)
+    @Mapping(target = "profiles", ignore = true)
+    @Mapping(target = "isBlocked", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    public abstract User toEntity(UserCreationDto dto);
 
     public User toCandidateEntity(CandidateRegistrationRequestDto dto, PasswordEncoder passwordEncoder) {
         User user = new User();
@@ -30,7 +42,7 @@ public abstract class UserMapper {
         user.setEmail(dto.getEmail().trim().toLowerCase());
         user.setHashedPassword(passwordEncoder.encode(dto.getPassword()));
         user.setPhone(dto.getPhone());
-        user.setRole(EMPLOYER);
+        user.setRole(COMPANY_OWNER);
         user.setIsBlocked(false);
         return user;
     }

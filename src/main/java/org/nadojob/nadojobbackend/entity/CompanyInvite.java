@@ -15,7 +15,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -44,17 +46,19 @@ public class CompanyInvite {
     private String email;
 
     @Column(name = "role_in_company")
-    private String roleInCompany;
+    @Enumerated(EnumType.STRING)
+    private UserRole roleInCompany;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "invited_by_user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_invite_user"))
+    @JoinColumn(name = "invited_by_user_id", foreignKey = @ForeignKey(name = "fk_invite_user"))
     private User invitedBy;
 
     @Column(nullable = false)
     private String token;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "status", nullable = false, columnDefinition = "company_invite_status")
     private CompanyInviteStatus status;
 
     @Column(name = "created_at", updatable = false)

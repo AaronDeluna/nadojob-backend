@@ -9,7 +9,7 @@
     <changeSet id="2025-06-30-init" author="ivan">
 
         <!-- ENUM-ы -->
-        <sql>CREATE TYPE user_role AS ENUM ('CANDIDATE','EMPLOYER','ADMIN');</sql>
+        <sql>CREATE TYPE user_role AS ENUM ('CANDIDATE','EMPLOYER','COMPANY_OWNER','ADMIN');</sql>
         <sql>CREATE TYPE company_invite_status AS ENUM ('PENDING','ACCEPTED','DECLINED','EXPIRED');</sql>
         <sql>CREATE TYPE job_post_status AS ENUM ('OPEN','CLOSED','BLOCKED');</sql>
         <sql>CREATE TYPE application_status AS ENUM ('NEW','IN_REVIEW','REJECTED','ACCEPTED');</sql>
@@ -97,6 +97,37 @@
             <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="now()"/>
         </createTable>
 
+        <!-- Сектор где работает компания -->
+        <createTable tableName="sectors">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="TEXT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+
+        <!-- Многие ко многим сетора компании -->
+        <createTable tableName="company_sectors">
+            <column name="company_id" type="UUID">
+                <constraints nullable="false"
+                             referencedTableName="companies"
+                             referencedColumnNames="id"
+                             foreignKeyName="fk_company_sectors_company"/>
+            </column>
+            <column name="sector_id" type="UUID">
+                <constraints nullable="false"
+                             referencedTableName="sectors"
+                             referencedColumnNames="id"
+                             foreignKeyName="fk_company_sectors_sector"/>
+            </column>
+            <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="now()"/>
+        </createTable>
+
+        <addPrimaryKey tableName="company_sectors"
+                       constraintName="pk_company_sectors"
+                       columnNames="company_id, sector_id"/>
+
         <!-- company_users -->
         <createTable tableName="company_users">
             <column name="user_id" type="UUID">
@@ -132,7 +163,7 @@
             <column name="email" type="TEXT"/>
             <column name="role_in_company" type="TEXT"/>
             <column name="invited_by_user_id" type="UUID">
-                <constraints nullable="false"
+                <constraints nullable="true"
                              referencedTableName="users"
                              referencedColumnNames="id"
                              foreignKeyName="fk_invite_user"/>

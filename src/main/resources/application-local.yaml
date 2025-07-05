@@ -2,6 +2,8 @@ server:
   port: 8080
 
 spring:
+  jackson:
+    time-zone: Europe/Moscow
   datasource:
     name: nadojob_db
     password: ivanmilovanov

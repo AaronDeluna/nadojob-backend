@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.nadojob.nadojobbackend.dto.auth.CandidateRegistrationRequestDto;
 import org.nadojob.nadojobbackend.dto.auth.EmployerRegistrationRequestDto;
+import org.nadojob.nadojobbackend.dto.user.UserCreationDto;
 import org.nadojob.nadojobbackend.entity.User;
 import org.nadojob.nadojobbackend.exception.UserNotFoundException;
 import org.nadojob.nadojobbackend.mapper.UserMapper;
@@ -21,6 +22,14 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final UserValidator userValidator;
+
+    public User createFromInvite(UserCreationDto dto) {
+        userValidator.validateEmailDuplicate(dto.getEmail());
+        userValidator.validatePhoneDuplicate(dto.getPhone());
+        User user = userMapper.toEntity(dto);
+        user.setHashedPassword(passwordEncoder.encode(dto.getPassword()));
+        return userRepository.save(user);
+    }
 
     public User createCandidate(CandidateRegistrationRequestDto dto) {
         userValidator.validateEmailDuplicate(dto.getEmail());

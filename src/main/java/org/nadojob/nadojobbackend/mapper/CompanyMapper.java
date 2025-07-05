@@ -12,8 +12,11 @@ import org.nadojob.nadojobbackend.dto.auth.EmployerRegistrationRequestDto;
 import org.nadojob.nadojobbackend.dto.company.CompanyResponseDto;
 import org.nadojob.nadojobbackend.dto.company.CompanyUpdateDto;
 import org.nadojob.nadojobbackend.entity.Company;
+import org.nadojob.nadojobbackend.entity.Sector;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CompanyMapper {
@@ -39,7 +42,14 @@ public interface CompanyMapper {
 
     List<CompanyResponseDto> toResponseListDto(List<Company> companies);
 
+    @Mapping(target = "sectors", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void update(@MappingTarget Company company, CompanyUpdateDto dto);
+
+    default List<String> mapSectorsToNames(Set<Sector> sectors) {
+        return sectors.stream()
+                .map(Sector::getName)
+                .collect(Collectors.toList());
+    }
 
 }
