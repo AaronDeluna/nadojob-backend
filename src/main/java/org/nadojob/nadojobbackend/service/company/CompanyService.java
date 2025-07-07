@@ -1,6 +1,7 @@
 package org.nadojob.nadojobbackend.service.company;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.nadojob.nadojobbackend.dto.PageDto;
 import org.nadojob.nadojobbackend.dto.company.AcceptInviteRequestDto;
 import org.nadojob.nadojobbackend.dto.company.CompanyCreationDto;
@@ -31,6 +32,7 @@ import java.util.UUID;
 
 import static org.nadojob.nadojobbackend.entity.CompanyInviteStatus.ACCEPTED;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CompanyService {

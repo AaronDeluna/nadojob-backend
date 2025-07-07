@@ -25,15 +25,10 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserValidator userValidator;
 
-    public User createFromInvite(CompanyInvite invite, AcceptInviteRequestDto accept) {
-        userValidator.validateEmailDuplicate(invite.getEmail());
-        userValidator.validatePhoneDuplicate(accept.getPhone());
-        User user = userMapper.toEntity(UserCreationDto.builder()
-                .userRole(invite.getRoleInCompany())
-                .phone(accept.getPhone())
-                .email(invite.getEmail())
-                .password(accept.getPassword())
-                .build());
+    public User createFromInvite(CompanyInvite companyInvite, AcceptInviteRequestDto acceptInvite) {
+        userValidator.validateEmailDuplicate(companyInvite.getEmail());
+        userValidator.validatePhoneDuplicate(acceptInvite.getPhone());
+        User user = userMapper.toInviteEntity(companyInvite, acceptInvite, passwordEncoder);
         user.setHashedPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
