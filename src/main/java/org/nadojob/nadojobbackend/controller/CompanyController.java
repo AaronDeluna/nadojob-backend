@@ -44,7 +44,7 @@ public class CompanyController {
 
     @GetMapping("/me")
     public ResponseEntity<CompanyResponseDto> getByCurrentUser(@AuthenticationPrincipal User principal) {
-        return ResponseEntity.ok(companyService.findByCurrentUser(principal.getId()));
+        return ResponseEntity.ok(companyService.findByOwnerId(principal.getId()));
     }
 
     @GetMapping("/{id}")

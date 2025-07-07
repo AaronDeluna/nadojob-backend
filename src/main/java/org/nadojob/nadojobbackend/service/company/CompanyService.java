@@ -6,10 +6,8 @@ import org.nadojob.nadojobbackend.dto.company.AcceptInviteRequestDto;
 import org.nadojob.nadojobbackend.dto.company.CompanyCreationDto;
 import org.nadojob.nadojobbackend.dto.company.CompanyResponseDto;
 import org.nadojob.nadojobbackend.dto.company.CompanyUpdateDto;
-import org.nadojob.nadojobbackend.dto.user.UserCreationDto;
 import org.nadojob.nadojobbackend.entity.Company;
 import org.nadojob.nadojobbackend.entity.CompanyInvite;
-import org.nadojob.nadojobbackend.entity.CompanyInviteStatus;
 import org.nadojob.nadojobbackend.entity.Sector;
 import org.nadojob.nadojobbackend.entity.User;
 import org.nadojob.nadojobbackend.exception.CompanyNotFoundException;
@@ -66,12 +64,7 @@ public class CompanyService {
     public User acceptInvite(AcceptInviteRequestDto dto) {
         CompanyInvite companyInvite = companyInviteService.findByToken(dto.getToken());
         companyInviteValidator.validateInviteToken(companyInvite);
-        User user = userService.createFromInvite(UserCreationDto.builder()
-                .userRole(companyInvite.getRoleInCompany())
-                .phone(dto.getPhone())
-                .email(dto.getPhone())
-                .password(dto.getPassword())
-                .build());
+        User user = userService.createFromInvite(companyInvite, dto);
         companyInviteService.updateStatusByToken(dto.getToken(), ACCEPTED);
         return user;
     }
@@ -84,7 +77,7 @@ public class CompanyService {
         return new PageDto<>(companies, companyPage.getTotalPages(), page, pageSize, companyPage.getTotalElements());
     }
 
-    public CompanyResponseDto findByCurrentUser(UUID userId) {
+    public CompanyResponseDto findByOwnerId(UUID userId) {
         return companyMapper.toResponseDto(findByCurrentUserId(userId));
     }
 
