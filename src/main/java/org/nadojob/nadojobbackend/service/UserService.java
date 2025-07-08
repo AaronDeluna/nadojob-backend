@@ -29,7 +29,6 @@ public class UserService {
         userValidator.validateEmailDuplicate(companyInvite.getEmail());
         userValidator.validatePhoneDuplicate(acceptInvite.getPhone());
         User user = userMapper.toInviteEntity(companyInvite, acceptInvite, passwordEncoder);
-        user.setHashedPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
