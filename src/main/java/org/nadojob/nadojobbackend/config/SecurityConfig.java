@@ -58,6 +58,7 @@ public class SecurityConfig {
                                 "/api/appointment-master",
                                 "/api/schedules/master/**"
                         ).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/jobs").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )

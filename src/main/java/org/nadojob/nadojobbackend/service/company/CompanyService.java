@@ -99,7 +99,7 @@ public class CompanyService {
         return companyMapper.toResponseDto(company);
     }
 
-    private Company findByCurrentUserId(UUID userId) {
+    public Company findByCurrentUserId(UUID userId) {
         return companyRepository.findByCreatedById(userId).orElseThrow(
                 () -> new CompanyNotFoundException("Компания не найдена")
         );
