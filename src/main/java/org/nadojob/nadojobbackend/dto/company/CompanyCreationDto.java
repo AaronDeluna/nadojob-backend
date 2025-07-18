@@ -1,4 +1,4 @@
-package org.nadojob.nadojobbackend.dto;
+package org.nadojob.nadojobbackend.dto.company;
 
 import lombok.Builder;
 import lombok.Data;

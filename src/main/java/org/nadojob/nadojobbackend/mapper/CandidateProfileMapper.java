@@ -6,6 +6,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.nadojob.nadojobbackend.dto.candidate_profile.CandidateMatchingDto;
 import org.nadojob.nadojobbackend.dto.candidate_profile.CandidateProfileRequestDto;
 import org.nadojob.nadojobbackend.dto.candidate_profile.CandidateProfileResponseDto;
 import org.nadojob.nadojobbackend.dto.candidate_profile.CandidateProfileUpdateDto;
@@ -25,6 +26,8 @@ public interface CandidateProfileMapper {
 
     @Mapping(target = "skills", source = "skills")
     CandidateProfileResponseDto toResponseDto(CandidateProfile entity);
+
+    CandidateMatchingDto toMatchingDto(CandidateProfile entity);
 
     @Mapping(target = "skills", source = "skills")
     List<CandidateProfileResponseDto> toResponseListDto(List<CandidateProfile> entity);

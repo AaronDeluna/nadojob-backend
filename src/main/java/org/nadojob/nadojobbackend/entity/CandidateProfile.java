@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.Type;
 import org.nadojob.nadojobbackend.dto.candidate_profile.EducationDto;
 import org.nadojob.nadojobbackend.dto.candidate_profile.LanguageDto;
@@ -31,6 +32,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "candidate_profiles")

@@ -3,15 +3,23 @@ package org.nadojob.nadojobbackend.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -20,6 +28,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicInsert
 public class Company {
 
     @Id
@@ -42,14 +51,54 @@ public class Company {
     @Column(nullable = false)
     private Double rating;
 
-    @Column(name = "is_blocked", nullable = false)
-    private Boolean isBlocked = false;
+    @ManyToOne
+    @JoinColumn(name = "created_by_user_id", nullable = false)
+    private User createdBy;
 
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "is_verified", nullable = false)
+    private Boolean isVerified;
+
+    @Column(name = "is_blocked", nullable = false)
+    private Boolean isBlocked;
+
+    private String country;
+
+    private String region;
+
+    private String city;
+
+    private String street;
+
+    @ManyToMany
+    @JoinTable(
+            name = "company_sectors",
+            joinColumns = @JoinColumn(name = "company_id"),
+            inverseJoinColumns = @JoinColumn(name = "sector_id"))
+    private Set<Sector> sectors;
+
+    @ManyToMany
+    @JoinTable(
+            name = "company_users",
+            joinColumns = @JoinColumn(name = "company_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> employees;
+
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
     @PrePersist
-    public void onCreate() {
-        this.createdAt = LocalDateTime.now();
+    public void prePersist() {
+        LocalDateTime now = LocalDateTime.now();
+        createdAt = now;
+        updatedAt = now;
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
 }

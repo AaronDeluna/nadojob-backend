@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+      http://www.liquibase.org/xml/ns/dbchangelog
+      https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.15.xsd">
+
+    <changeSet id="2025-07-05-add-sectors" author="ivan">
+
+        <!-- Сектора -->
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Информационные технологии"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Телекоммуникации"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Финансы"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Маркетинг"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Право"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Некоммерческие организации"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Транспорт"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Еда"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Культура"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Консалтинг"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Медиа"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Образование"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Геймдев"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Наука"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="E-commerce"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Ритейл"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Искусственный интеллект"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Блокчейн и криптовалюты"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Медицина и здравоохранение"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Экология и устойчивое развитие"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Авиация и авиационный транспорт"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Морская отрасль"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Энергетика"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Строительство и недвижимость"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Фармацевтика"/>
+        </insert>
+        <insert tableName="sectors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Робототехника"/>
+        </insert>
+
+    </changeSet>
+</databaseChangeLog>

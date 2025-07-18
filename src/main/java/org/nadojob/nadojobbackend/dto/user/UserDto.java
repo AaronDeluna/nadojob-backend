@@ -1,4 +1,4 @@
-package org.nadojob.nadojobbackend.dto;
+package org.nadojob.nadojobbackend.dto.user;
 
 import lombok.Data;
 import org.nadojob.nadojobbackend.entity.UserRole;
@@ -14,4 +14,5 @@ public class UserDto {
     private Boolean isBlocked;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
 }

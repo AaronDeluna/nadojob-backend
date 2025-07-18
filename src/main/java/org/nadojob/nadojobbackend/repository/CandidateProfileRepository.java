@@ -21,6 +21,8 @@ public interface CandidateProfileRepository extends JpaRepository<CandidateProfi
 
     List<CandidateProfile> findAllByUserId(UUID userID);
 
+    Optional<CandidateProfile> findByUserId(UUID userId);
+
     Optional<CandidateProfile> findByIdAndUserId(UUID candidateProfileId, UUID userId);
 
 }

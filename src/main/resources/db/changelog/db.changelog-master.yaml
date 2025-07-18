@@ -1,3 +1,5 @@
 databaseChangeLog:
   - include:
       file: db/changelog/V2025_06_30__init.xml
+  - include:
+      file: db/changelog/2025-07-04-add-sectors.xml

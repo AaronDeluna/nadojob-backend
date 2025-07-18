@@ -17,7 +17,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({
             EntityNotFoundException.class,
-            CandidateProfileNotFoundException.class
+            CandidateProfileNotFoundException.class,
+            CompanyNotFoundException.class,
+            SectorNotFoundException.class,
+            InviteTokenNotFoundException.class
     })
     public ResponseEntity<ErrorResponseDto> handleEntityNotFound(RuntimeException e) {
         log.warn("Entity not found: {}", e.getMessage());
@@ -25,10 +28,22 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({
+            InviteTokenExpiredException.class
+    })
+    public ResponseEntity<ErrorResponseDto> handleExpired(RuntimeException e) {
+        log.warn("Entity not found: {}", e.getMessage());
+        return buildErrorResponse(HttpStatus.CONFLICT, e.getMessage());
+    }
+
+
+    @ExceptionHandler({
             EmailAlreadyExistsException.class,
             PhoneAlreadyExistsException.class,
             CompanyNameAlreadyExistsException.class,
-            ProfileTitleAlreadyExistsException.class
+            ProfileTitleAlreadyExistsException.class,
+            SectorNameAlreadyExistsException.class,
+            UserAlreadyInvitedException.class,
+            JobApplicationAlreadyExistsException.class
     })
     public ResponseEntity<ErrorResponseDto> handleAlreadyExists(RuntimeException e) {
         log.warn("Conflict: {}", e.getMessage());

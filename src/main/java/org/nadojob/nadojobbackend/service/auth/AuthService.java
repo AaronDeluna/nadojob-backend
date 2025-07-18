@@ -5,9 +5,12 @@ import org.nadojob.nadojobbackend.dto.auth.AuthenticationResponseDto;
 import org.nadojob.nadojobbackend.dto.auth.CandidateRegistrationRequestDto;
 import org.nadojob.nadojobbackend.dto.auth.EmployerRegistrationRequestDto;
 import org.nadojob.nadojobbackend.dto.auth.LoginRequestDto;
+import org.nadojob.nadojobbackend.dto.company.AcceptInviteRequestDto;
 import org.nadojob.nadojobbackend.entity.User;
 import org.nadojob.nadojobbackend.service.UserService;
+import org.nadojob.nadojobbackend.service.company.CompanyInviteService;
 import org.nadojob.nadojobbackend.service.company.CompanyRegistrationService;
+import org.nadojob.nadojobbackend.service.company.CompanyService;
 import org.nadojob.nadojobbackend.validation.UserValidator;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final UserService userService;
+    private final CompanyService companyService;
     private final CompanyRegistrationService companyRegistrationService;
     private final JwtService jwtService;
     private final UserValidator userValidator;
@@ -34,6 +38,11 @@ public class AuthService {
 
     public AuthenticationResponseDto registerEmployer(EmployerRegistrationRequestDto dto) {
         User user = companyRegistrationService.registerCompanyWithOwner(dto);
+        return generateTokenResponse(user);
+    }
+
+    public AuthenticationResponseDto acceptInvite(AcceptInviteRequestDto dto) {
+        User user = companyService.acceptInvite(dto);
         return generateTokenResponse(user);
     }
 
