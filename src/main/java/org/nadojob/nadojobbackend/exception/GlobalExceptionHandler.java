@@ -42,7 +42,8 @@ public class GlobalExceptionHandler {
             CompanyNameAlreadyExistsException.class,
             ProfileTitleAlreadyExistsException.class,
             SectorNameAlreadyExistsException.class,
-            UserAlreadyInvitedException.class
+            UserAlreadyInvitedException.class,
+            JobApplicationAlreadyExistsException.class
     })
     public ResponseEntity<ErrorResponseDto> handleAlreadyExists(RuntimeException e) {
         log.warn("Conflict: {}", e.getMessage());

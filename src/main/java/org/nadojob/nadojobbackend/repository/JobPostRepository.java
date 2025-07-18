@@ -11,5 +11,6 @@ import java.util.UUID;
 public interface JobPostRepository extends JpaRepository<JobPost, UUID> {
     Page<JobPost> findByStatus(Pageable pageable, JobPostStatus status);
 
-    boolean existsByIdAndCompanyEmployees_Id(UUID jobId, UUID userId);
+    boolean existsByIdAndCompanyEmployees_Id(UUID jobPostId, UUID userId);
+
 }

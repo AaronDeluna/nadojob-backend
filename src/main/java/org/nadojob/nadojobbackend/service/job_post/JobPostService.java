@@ -2,21 +2,31 @@ package org.nadojob.nadojobbackend.service.job_post;
 
 import lombok.RequiredArgsConstructor;
 import org.nadojob.nadojobbackend.dto.PageDto;
+import org.nadojob.nadojobbackend.dto.candidate_profile.CandidateProfileResponseDto;
+import org.nadojob.nadojobbackend.dto.job_post.JobApplicationRequestDto;
 import org.nadojob.nadojobbackend.dto.job_post.JobPostRequestDto;
 import org.nadojob.nadojobbackend.dto.job_post.JobPostResponseDto;
 import org.nadojob.nadojobbackend.dto.job_post.JobPostUpdateDto;
+import org.nadojob.nadojobbackend.entity.CandidateProfile;
 import org.nadojob.nadojobbackend.entity.Company;
 import org.nadojob.nadojobbackend.entity.JobPost;
+import org.nadojob.nadojobbackend.exception.CandidateProfileNotFoundException;
 import org.nadojob.nadojobbackend.exception.JobPostNotFoundException;
+import org.nadojob.nadojobbackend.mapper.CandidateProfileMapper;
 import org.nadojob.nadojobbackend.mapper.JobPostMapper;
+import org.nadojob.nadojobbackend.repository.CandidateProfileRepository;
 import org.nadojob.nadojobbackend.repository.JobPostRepository;
+import org.nadojob.nadojobbackend.service.CandidateProfileService;
 import org.nadojob.nadojobbackend.service.company.CompanyService;
+import org.nadojob.nadojobbackend.validation.JobPostValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,9 +37,16 @@ import static org.nadojob.nadojobbackend.entity.JobPostStatus.OPEN;
 public class JobPostService {
 
     private final static String SORT_BY_CREATE_AT = "createdAt";
+    public static final String CANDIDATE_PROFILE_NOT_FOUND = "Резюме не найдено";
+    public static final String JOB_POST_NOT_FOUND = "Вакансия не найдена";
     private final JobPostRepository jobPostRepository;
+    private final CandidateProfileRepository candidateProfileRepository;
     private final JobPostMapper jobPostMapper;
+    private final CandidateProfileMapper candidateProfileMapper;
     private final CompanyService companyService;
+    private final JobApplicationScoringService jobApplicationScoringService;
+    private final JobApplicationService jobApplicationService;
+    private final JobPostValidator jobPostValidator;
 
     public JobPostResponseDto create(JobPostRequestDto dto, UUID currentUserId) {
         Company company = companyService.findByCurrentUserId(currentUserId);
@@ -38,8 +55,22 @@ public class JobPostService {
         return jobPostMapper.toResponseDto(jobPostRepository.save(jobPost));
     }
 
+    @Transactional
+    public BigDecimal applyToJob(JobApplicationRequestDto dto) {
+        JobPost jobPost = getJobPostById(dto.getJobPostId());
+        CandidateProfile candidate = getCandidateById(dto.getCandidateProfileId());
+        jobPostValidator.validateDuplicateApply(candidate.getId(), jobPost.getId());
+
+        BigDecimal score = jobApplicationScoringService.scoreCandidate(
+                candidateProfileMapper.toMatchingDto(candidate),
+                jobPostMapper.toMatchingDto(jobPost)
+        );
+        jobApplicationService.create(candidate, jobPost, score);
+        return score;
+    }
+
     public JobPostResponseDto findById(UUID id) {
-        return jobPostMapper.toResponseDto(getById(id));
+        return jobPostMapper.toResponseDto(getJobPostById(id));
     }
 
     public PageDto<JobPostResponseDto> findAll(int page, int pageSize) {
@@ -50,7 +81,7 @@ public class JobPostService {
     }
 
     public JobPostResponseDto updateById(UUID id, JobPostUpdateDto dto) {
-        JobPost jobPost = getById(id);
+        JobPost jobPost = getJobPostById(id);
         jobPostMapper.update(jobPost, dto);
         return jobPostMapper.toResponseDto(jobPost);
     }
@@ -62,10 +93,14 @@ public class JobPostService {
         jobPostRepository.deleteById(id);
     }
 
-    private JobPost getById(UUID id) {
-        return jobPostRepository.findById(id).orElseThrow(
-                () -> new JobPostNotFoundException("Вакансия не найдена")
-        );
+    private CandidateProfile getCandidateById(UUID id) {
+        return candidateProfileRepository.findById(id)
+                .orElseThrow(() -> new CandidateProfileNotFoundException(CANDIDATE_PROFILE_NOT_FOUND));
+    }
+
+    private JobPost getJobPostById(UUID id) {
+        return jobPostRepository.findById(id)
+                .orElseThrow(() -> new JobPostNotFoundException(JOB_POST_NOT_FOUND));
     }
 
 }

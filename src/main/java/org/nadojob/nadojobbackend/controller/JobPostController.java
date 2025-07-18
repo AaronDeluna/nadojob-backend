@@ -2,6 +2,7 @@ package org.nadojob.nadojobbackend.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.nadojob.nadojobbackend.dto.PageDto;
+import org.nadojob.nadojobbackend.dto.job_post.JobApplicationRequestDto;
 import org.nadojob.nadojobbackend.dto.job_post.JobPostRequestDto;
 import org.nadojob.nadojobbackend.dto.job_post.JobPostResponseDto;
 import org.nadojob.nadojobbackend.dto.job_post.JobPostUpdateDto;
@@ -13,7 +14,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @RestController
@@ -36,6 +37,12 @@ public class JobPostController {
     public ResponseEntity<JobPostResponseDto> create(@RequestBody JobPostRequestDto dto,
                                                      @AuthenticationPrincipal User principal) {
         return ResponseEntity.status(HttpStatus.CREATED).body(jobPostService.create(dto, principal.getId()));
+    }
+
+    @PostMapping("/apply")
+    @PreAuthorize("hasRole('CANDIDATE')")
+    public ResponseEntity<BigDecimal> apply(@RequestBody JobApplicationRequestDto dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(jobPostService.applyToJob(dto));
     }
 
     @GetMapping("/{id}")
@@ -57,7 +64,6 @@ public class JobPostController {
         return ResponseEntity.ok(jobPostService.updateById(id, dto));
     }
 
-    @PatchMapping("")
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('EMPLOYER','COMPANY_OWNER') "

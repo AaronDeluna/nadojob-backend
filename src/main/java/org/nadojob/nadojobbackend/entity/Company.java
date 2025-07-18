@@ -18,6 +18,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -74,6 +75,14 @@ public class Company {
             joinColumns = @JoinColumn(name = "company_id"),
             inverseJoinColumns = @JoinColumn(name = "sector_id"))
     private Set<Sector> sectors;
+
+    @ManyToMany
+    @JoinTable(
+            name = "company_users",
+            joinColumns = @JoinColumn(name = "company_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> employees;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

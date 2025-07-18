@@ -7,6 +7,7 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.nadojob.nadojobbackend.dto.company.CompanyUpdateDto;
+import org.nadojob.nadojobbackend.dto.job_post.JobPostMatchingDto;
 import org.nadojob.nadojobbackend.dto.job_post.JobPostRequestDto;
 import org.nadojob.nadojobbackend.dto.job_post.JobPostResponseDto;
 import org.nadojob.nadojobbackend.dto.job_post.JobPostUpdateDto;
@@ -27,6 +28,8 @@ public interface JobPostMapper {
     JobPost toEntity(JobPostRequestDto dto);
 
     JobPostResponseDto toResponseDto(JobPost entity);
+
+    JobPostMatchingDto toMatchingDto(JobPost entity);
 
     List<JobPostResponseDto> toResponseDtoList(List<JobPost> entityList);
 

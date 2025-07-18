@@ -198,6 +198,33 @@
             <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="now()"/>
         </createTable>
 
+        <createTable tableName="applications">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="candidate_id" type="UUID">
+                <constraints nullable="false"
+                             referencedTableName="candidate_profiles"
+                             referencedColumnNames="id"
+                             foreignKeyName="fk_application_candidate"/>
+            </column>
+            <column name="job_post_id" type="UUID">
+                <constraints nullable="false"
+                             referencedTableName="job_posts"
+                             referencedColumnNames="id"
+                             foreignKeyName="fk_application_job"/>
+            </column>
+            <column name="status" type="application_status" defaultValue="NEW"/>
+            <column name="suitability_score" type="NUMERIC(3,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="now()"/>
+        </createTable>
+
+        <addUniqueConstraint tableName="applications"
+                             columnNames="candidate_id, job_post_id"
+                             constraintName="uk_candidate_job_once"/>
+
         <!-- Индексы -->
         <sql>CREATE INDEX IF NOT EXISTS idx_profiles_skills
             ON candidate_profiles USING GIN (skills);</sql>
@@ -220,4 +247,5 @@
         </rollback>
 
     </changeSet>
+
 </databaseChangeLog>
