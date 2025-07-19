@@ -24,15 +24,13 @@ public class CandidateProfileService {
 
     public static final String PROFILE_NOT_FOUND = "Резюме не найдено";
     private final CandidateProfileRepository candidateProfileRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final CandidateProfileMapper candidateProfileMapper;
     private final CandidateProfileValidator candidateProfileValidator;
 
     @Transactional
     public CandidateProfileResponseDto create(CandidateProfileRequestDto dto, UUID userId) {
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException(String.format("Пользователь c id: '%s' не найден", userId))
-        );
+        User user = userService.findById(userId);
         candidateProfileValidator.validateTitleUniqueness(dto.getTitle(), userId);
         CandidateProfile candidateProfile = candidateProfileMapper.toEntity(dto);
         candidateProfile.setUser(user);
@@ -45,17 +43,13 @@ public class CandidateProfileService {
     }
 
     public CandidateProfileResponseDto findById(UUID id) {
-        CandidateProfile candidateProfile = candidateProfileRepository.findById(id).orElseThrow(
-                () -> new CandidateProfileNotFoundException(PROFILE_NOT_FOUND)
-        );
+        CandidateProfile candidateProfile = getByIdOrElseThrow(id);
         return candidateProfileMapper.toResponseDto(candidateProfile);
     }
 
     @Transactional
     public CandidateProfileResponseDto updateById(UUID id, CandidateProfileUpdateDto dto) {
-        CandidateProfile candidateProfile = candidateProfileRepository.findById(id).orElseThrow(
-                () -> new CandidateProfileNotFoundException(PROFILE_NOT_FOUND)
-        );
+        CandidateProfile candidateProfile = getByIdOrElseThrow(id);
         candidateProfileValidator.validateTitleUniqueness(dto.getTitle(), candidateProfile.getUser().getId());
         candidateProfileMapper.update(candidateProfile, dto);
         return candidateProfileMapper.toResponseDto(candidateProfile);
@@ -63,10 +57,14 @@ public class CandidateProfileService {
 
     @Transactional
     public void deleteById(UUID id) {
-        if (!candidateProfileRepository.existsById(id)) {
-            throw new CandidateProfileNotFoundException(PROFILE_NOT_FOUND);
-        }
-        candidateProfileRepository.deleteById(id);
+        CandidateProfile candidateProfile = getByIdOrElseThrow(id);
+        candidateProfileRepository.delete(candidateProfile);
+    }
+
+    private CandidateProfile getByIdOrElseThrow(UUID id) {
+        return candidateProfileRepository.findById(id).orElseThrow(
+                () -> new CandidateProfileNotFoundException(PROFILE_NOT_FOUND)
+        );
     }
 
 }

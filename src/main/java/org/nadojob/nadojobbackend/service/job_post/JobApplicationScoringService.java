@@ -1,55 +1,57 @@
 package org.nadojob.nadojobbackend.service.job_post;
 
-import com.theokanning.openai.completion.chat.ChatCompletionRequest;
 import com.theokanning.openai.completion.chat.ChatCompletionResult;
 import com.theokanning.openai.completion.chat.ChatMessage;
-import com.theokanning.openai.service.OpenAiService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.nadojob.nadojobbackend.dto.candidate_profile.CandidateMatchingDto;
 import org.nadojob.nadojobbackend.dto.job_post.JobPostMatchingDto;
+import org.nadojob.nadojobbackend.service.ai.OpenAiIntegrationService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class JobApplicationScoringService {
 
-    private final static String AI_PROMPT_MESSAGE =
-            "Проанализируй соответствие резюме кандидата требованиям вакансии. Верни только одну числовую оценку от 0.00 до 1.00, где 1.00 — полное соответствие, 0.00 — полное несоответствие. Никаких комментариев, пояснений или текста — только число.";
+    @Value("${ai.prompt}")
+    private String aiPromptMessage;
     private final static String USER_PROMPT = "Резюме кандидата: %s\nВакансия:%s";
-    private final static String AI_MODEL = "gpt-3.5-turbo";
-    private final OpenAiService aiService;
+    private final OpenAiIntegrationService openAiIntegrationService;
 
     public BigDecimal scoreCandidate(CandidateMatchingDto candidate, JobPostMatchingDto jobPost) {
         List<ChatMessage> messages = List.of(
-                new ChatMessage("system", AI_PROMPT_MESSAGE),
+                new ChatMessage("system", aiPromptMessage),
                 new ChatMessage("user", String.format(USER_PROMPT, candidate.toString(), jobPost.toString()))
         );
 
-        ChatCompletionRequest request = buildChatRequest(messages);
-        ChatCompletionResult result = aiService.createChatCompletion(request);
-        String content = getContent(result);
+        String content = extractMessageText(openAiIntegrationService.sendMessage(messages));
+        return parseScore(content);
+    }
 
-        try {
-            return new BigDecimal(content.trim().replace(",", "."));
-        } catch (NumberFormatException e) {
+    private String extractMessageText(ChatCompletionResult result) {
+        if (isInvalidChatCompletionResult(result)) {
+            log.warn("Ошибка с возвратом ответа от AI: {}", result);
+            throw new IllegalStateException("AI не вернул ни одного ответа");
+        }
+        return result.getChoices().get(0).getMessage().getContent();
+    }
+
+    private BigDecimal parseScore(String content) {
+        String normalized = content.trim().replace(",", ".");
+        if (!normalized.matches("^0(\\.\\d{1,2})?$|^1(\\.00?)?$")) {
+            log.warn("AI вернул неожиданный формат: {}", content);
             throw new RuntimeException("AI вернул некорректный результат: " + content);
         }
+        return new BigDecimal(normalized);
     }
 
-    private ChatCompletionRequest buildChatRequest(List<ChatMessage> messages) {
-        return ChatCompletionRequest.builder()
-                .model(AI_MODEL)
-                .messages(messages)
-                .temperature(0.0)
-                .maxTokens(10)
-                .build();
-    }
-
-    private String getContent(ChatCompletionResult result) {
-        return result.getChoices().get(0).getMessage().getContent();
+    private boolean isInvalidChatCompletionResult(ChatCompletionResult result) {
+        return result == null || result.getChoices() == null || result.getChoices().isEmpty();
     }
 
 }

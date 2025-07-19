@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.nadojob.nadojobbackend.dto.auth.CandidateRegistrationRequestDto;
 import org.nadojob.nadojobbackend.dto.auth.EmployerRegistrationRequestDto;
 import org.nadojob.nadojobbackend.dto.company.AcceptInviteRequestDto;
-import org.nadojob.nadojobbackend.dto.user.UserCreationDto;
 import org.nadojob.nadojobbackend.entity.CompanyInvite;
 import org.nadojob.nadojobbackend.entity.User;
 import org.nadojob.nadojobbackend.exception.UserNotFoundException;
@@ -14,6 +13,8 @@ import org.nadojob.nadojobbackend.repository.UserRepository;
 import org.nadojob.nadojobbackend.validation.UserValidator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -46,6 +47,12 @@ public class UserService {
     public User findByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(
                 () -> new UserNotFoundException("Почта указана неверно или не существует")
+        );
+    }
+
+    public User findById(UUID id) {
+        return userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException(String.format("Пользователь c id: '%s' не найден", id))
         );
     }
 

@@ -12,11 +12,9 @@ import org.nadojob.nadojobbackend.entity.CompanyInvite;
 import org.nadojob.nadojobbackend.entity.Sector;
 import org.nadojob.nadojobbackend.entity.User;
 import org.nadojob.nadojobbackend.exception.CompanyNotFoundException;
-import org.nadojob.nadojobbackend.exception.UserNotFoundException;
 import org.nadojob.nadojobbackend.mapper.CompanyMapper;
 import org.nadojob.nadojobbackend.repository.CompanyRepository;
 import org.nadojob.nadojobbackend.repository.SectorRepository;
-import org.nadojob.nadojobbackend.repository.UserRepository;
 import org.nadojob.nadojobbackend.service.UserService;
 import org.nadojob.nadojobbackend.validation.CompanyInviteValidator;
 import org.nadojob.nadojobbackend.validation.CompanyValidator;
@@ -39,7 +37,6 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
     private final SectorRepository sectorRepository;
-    private final UserRepository userRepository;
     private final CompanyMapper companyMapper;
     private final CompanyValidator companyValidator;
     private final CompanyInviteValidator companyInviteValidator;
@@ -56,10 +53,7 @@ public class CompanyService {
     public String inviteUserByEmail(String email, UUID ownerUserId) {
         companyInviteValidator.validateEmailNotExists(email);
         Company company = findByCurrentUserId(ownerUserId);
-        User user = userRepository.findById(ownerUserId).orElseThrow(
-                () -> new UserNotFoundException("Пользотвель не найден")
-        );
-        return companyInviteService.create(company, user, email);
+        return companyInviteService.create(company, company.getCreatedBy(), email);
     }
 
     @Transactional
