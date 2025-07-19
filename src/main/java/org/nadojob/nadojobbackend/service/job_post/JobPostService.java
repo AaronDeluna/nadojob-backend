@@ -2,7 +2,6 @@ package org.nadojob.nadojobbackend.service.job_post;
 
 import lombok.RequiredArgsConstructor;
 import org.nadojob.nadojobbackend.dto.PageDto;
-import org.nadojob.nadojobbackend.dto.candidate_profile.CandidateProfileResponseDto;
 import org.nadojob.nadojobbackend.dto.job_post.JobApplicationRequestDto;
 import org.nadojob.nadojobbackend.dto.job_post.JobPostRequestDto;
 import org.nadojob.nadojobbackend.dto.job_post.JobPostResponseDto;
@@ -16,7 +15,6 @@ import org.nadojob.nadojobbackend.mapper.CandidateProfileMapper;
 import org.nadojob.nadojobbackend.mapper.JobPostMapper;
 import org.nadojob.nadojobbackend.repository.CandidateProfileRepository;
 import org.nadojob.nadojobbackend.repository.JobPostRepository;
-import org.nadojob.nadojobbackend.service.CandidateProfileService;
 import org.nadojob.nadojobbackend.service.company.CompanyService;
 import org.nadojob.nadojobbackend.validation.JobPostValidator;
 import org.springframework.data.domain.Page;
@@ -36,8 +34,8 @@ import static org.nadojob.nadojobbackend.entity.JobPostStatus.OPEN;
 @RequiredArgsConstructor
 public class JobPostService {
 
-    private final static String SORT_BY_CREATE_AT = "createdAt";
-    public static final String CANDIDATE_PROFILE_NOT_FOUND = "Резюме не найдено";
+    private final static String SORT_BY_CREATED_AT = "createdAt";
+    private static final String CANDIDATE_PROFILE_NOT_FOUND = "Резюме не найдено";
     public static final String JOB_POST_NOT_FOUND = "Вакансия не найдена";
     private final JobPostRepository jobPostRepository;
     private final CandidateProfileRepository candidateProfileRepository;
@@ -65,6 +63,7 @@ public class JobPostService {
                 candidateProfileMapper.toMatchingDto(candidate),
                 jobPostMapper.toMatchingDto(jobPost)
         );
+
         jobApplicationService.create(candidate, jobPost, score);
         return score;
     }
@@ -74,12 +73,13 @@ public class JobPostService {
     }
 
     public PageDto<JobPostResponseDto> findAll(int page, int pageSize) {
-        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(SORT_BY_CREATE_AT).descending());
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(SORT_BY_CREATED_AT).descending());
         Page<JobPost> jobPostPage = jobPostRepository.findByStatus(pageable, OPEN);
         List<JobPostResponseDto> jobPosts = jobPostMapper.toResponseDtoList(jobPostPage.getContent());
         return new PageDto<>(jobPosts, jobPostPage.getTotalPages(), page, pageSize, jobPostPage.getTotalElements());
     }
 
+    @Transactional
     public JobPostResponseDto updateById(UUID id, JobPostUpdateDto dto) {
         JobPost jobPost = getJobPostById(id);
         jobPostMapper.update(jobPost, dto);
@@ -88,7 +88,7 @@ public class JobPostService {
 
     public void deleteById(UUID id) {
         if (!jobPostRepository.existsById(id)) {
-            throw new JobPostNotFoundException("Вакансия не найдена");
+            throw new JobPostNotFoundException(JOB_POST_NOT_FOUND);
         }
         jobPostRepository.deleteById(id);
     }

@@ -50,6 +50,14 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
+    @ExceptionHandler({
+            OpenAiIntegrationException.class
+    })
+    public ResponseEntity<ErrorResponseDto> handleIntegration(RuntimeException e) {
+        log.warn("Conflict: {}", e.getMessage());
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
     @ExceptionHandler(UserBlockedException.class)
     public ResponseEntity<ErrorResponseDto> handleUserBlocked(UserBlockedException e) {
         return buildErrorResponse(HttpStatus.FORBIDDEN, e.getMessage());
