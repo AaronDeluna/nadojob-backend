@@ -58,7 +58,7 @@ public class JobPostController {
     }
 
     @GetMapping("/jobs")
-    @PreAuthorize("hasAnyRole('ADMIN','COMPANY_OWNER')")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYER','COMPANY_OWNER')")
     public ResponseEntity<List<JobPostResponseDto>> getAllByCurrenUserCompany(@AuthenticationPrincipal User principal) {
         return ResponseEntity.ok(jobPostService.findAllByCurrentUserCompany(principal.getId()));
     }
