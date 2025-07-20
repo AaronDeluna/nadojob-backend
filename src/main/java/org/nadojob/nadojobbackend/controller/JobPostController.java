@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -54,6 +55,12 @@ public class JobPostController {
     public ResponseEntity<PageDto<JobPostResponseDto>> getAll(@RequestParam(defaultValue = "0") int page,
                                                               @RequestParam(defaultValue = "50") int pageSize) {
         return ResponseEntity.ok(jobPostService.findAll(page, pageSize));
+    }
+
+    @GetMapping("/jobs")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYER','COMPANY_OWNER')")
+    public ResponseEntity<List<JobPostResponseDto>> getAllByCurrenUserCompany(@AuthenticationPrincipal User principal) {
+        return ResponseEntity.ok(jobPostService.findAllByCurrentUserCompany(principal.getId()));
     }
 
     @PutMapping("/{id}")

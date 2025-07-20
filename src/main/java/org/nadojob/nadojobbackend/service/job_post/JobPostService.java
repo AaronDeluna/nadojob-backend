@@ -72,6 +72,11 @@ public class JobPostService {
         return jobPostMapper.toResponseDto(getJobPostById(id));
     }
 
+    public List<JobPostResponseDto> findAllByCurrentUserCompany(UUID userId) {
+        UUID companyId = companyService.findByCurrentUserId(userId).getId();
+        return jobPostMapper.toResponseDtoList(jobPostRepository.findAllByCompanyId(companyId));
+    }
+
     public PageDto<JobPostResponseDto> findAll(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by(SORT_BY_CREATED_AT).descending());
         Page<JobPost> jobPostPage = jobPostRepository.findByStatus(pageable, OPEN);
