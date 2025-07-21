@@ -58,6 +58,14 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
+    @ExceptionHandler({
+            DailyApplicationLimitExceededException.class
+    })
+    public ResponseEntity<ErrorResponseDto> handleLimit(RuntimeException e) {
+        log.warn("Conflict: {}", e.getMessage());
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
     @ExceptionHandler(UserBlockedException.class)
     public ResponseEntity<ErrorResponseDto> handleUserBlocked(UserBlockedException e) {
         return buildErrorResponse(HttpStatus.FORBIDDEN, e.getMessage());

@@ -58,12 +58,8 @@ public class JobPostService {
         JobPost jobPost = getJobPostById(dto.getJobPostId());
         CandidateProfile candidate = getCandidateById(dto.getCandidateProfileId());
         jobPostValidator.validateDuplicateApply(candidate.getId(), jobPost.getId());
-
-        BigDecimal score = jobApplicationScoringService.scoreCandidate(
-                candidateProfileMapper.toMatchingDto(candidate),
-                jobPostMapper.toMatchingDto(jobPost)
-        );
-
+        jobPostValidator.validateMaxApplicationsPerDay(candidate.getId());
+        BigDecimal score = calculateCandidateScore(candidate, jobPost);
         jobApplicationService.create(candidate, jobPost, score);
         return score;
     }
@@ -106,6 +102,13 @@ public class JobPostService {
     private JobPost getJobPostById(UUID id) {
         return jobPostRepository.findById(id)
                 .orElseThrow(() -> new JobPostNotFoundException(JOB_POST_NOT_FOUND));
+    }
+
+    private BigDecimal calculateCandidateScore(CandidateProfile candidate, JobPost jobPost) {
+        return jobApplicationScoringService.scoreCandidate(
+                candidateProfileMapper.toMatchingDto(candidate),
+                jobPostMapper.toMatchingDto(jobPost)
+        );
     }
 
 }
