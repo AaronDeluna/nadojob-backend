@@ -23,8 +23,8 @@ public class JobPostValidator {
     }
 
     public void validateMaxApplicationsPerDay(UUID candidateId) {
-        if (jobApplicationRepository.countByCandidateIdAndCreatedDate(candidateId, LocalDate.now())
-                >= MAX_APPLICATION_PER_DAY) {
+        int count = jobApplicationRepository.countByCandidateIdAndCreatedDate(candidateId, LocalDate.now());
+        if (count >= MAX_APPLICATION_PER_DAY) {
             throw new DailyApplicationLimitExceededException("Достигнут лимит откликов за сегодня.");
         }
     }
