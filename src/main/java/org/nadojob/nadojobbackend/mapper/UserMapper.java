@@ -3,18 +3,17 @@ package org.nadojob.nadojobbackend.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import org.nadojob.nadojobbackend.dto.auth.CandidateRegistrationRequestDto;
+import org.nadojob.nadojobbackend.dto.auth.EmployerRegistrationRequestDto;
 import org.nadojob.nadojobbackend.dto.company.AcceptInviteRequestDto;
 import org.nadojob.nadojobbackend.dto.user.UserCreationDto;
 import org.nadojob.nadojobbackend.dto.user.UserDto;
-import org.nadojob.nadojobbackend.dto.auth.CandidateRegistrationRequestDto;
-import org.nadojob.nadojobbackend.dto.auth.EmployerRegistrationRequestDto;
 import org.nadojob.nadojobbackend.entity.CompanyInvite;
 import org.nadojob.nadojobbackend.entity.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.nadojob.nadojobbackend.entity.UserRole.CANDIDATE;
 import static org.nadojob.nadojobbackend.entity.UserRole.COMPANY_OWNER;
-import static org.nadojob.nadojobbackend.entity.UserRole.EMPLOYER;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public abstract class UserMapper {

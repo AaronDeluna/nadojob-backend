@@ -1,7 +1,6 @@
 package org.nadojob.nadojobbackend.dto.company;
 
 import lombok.Data;
-import org.nadojob.nadojobbackend.entity.Sector;
 
 import java.util.List;
 

@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.nadojob.nadojobbackend.entity.Application;
 import org.nadojob.nadojobbackend.entity.CandidateProfile;
 import org.nadojob.nadojobbackend.entity.JobPost;
-import org.nadojob.nadojobbackend.exception.JobApplicationAlreadyExistsException;
 import org.nadojob.nadojobbackend.repository.JobApplicationRepository;
 import org.springframework.stereotype.Service;
 

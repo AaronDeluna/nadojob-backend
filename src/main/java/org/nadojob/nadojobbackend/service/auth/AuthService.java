@@ -8,7 +8,6 @@ import org.nadojob.nadojobbackend.dto.auth.LoginRequestDto;
 import org.nadojob.nadojobbackend.dto.company.AcceptInviteRequestDto;
 import org.nadojob.nadojobbackend.entity.User;
 import org.nadojob.nadojobbackend.service.UserService;
-import org.nadojob.nadojobbackend.service.company.CompanyInviteService;
 import org.nadojob.nadojobbackend.service.company.CompanyRegistrationService;
 import org.nadojob.nadojobbackend.service.company.CompanyService;
 import org.nadojob.nadojobbackend.validation.UserValidator;

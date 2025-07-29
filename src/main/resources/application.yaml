@@ -9,3 +9,4 @@ spring:
     password: ivanmilovanov
     url: jdbc:postgresql://localhost:5432/nadojob_db
     driver-class-name: org.postgresql.Driver
+

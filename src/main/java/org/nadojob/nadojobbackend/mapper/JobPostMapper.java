@@ -6,12 +6,10 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.nadojob.nadojobbackend.dto.company.CompanyUpdateDto;
 import org.nadojob.nadojobbackend.dto.job_post.JobPostMatchingDto;
 import org.nadojob.nadojobbackend.dto.job_post.JobPostRequestDto;
 import org.nadojob.nadojobbackend.dto.job_post.JobPostResponseDto;
 import org.nadojob.nadojobbackend.dto.job_post.JobPostUpdateDto;
-import org.nadojob.nadojobbackend.entity.Company;
 import org.nadojob.nadojobbackend.entity.JobPost;
 
 import java.util.List;

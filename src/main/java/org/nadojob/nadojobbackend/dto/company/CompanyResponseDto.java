@@ -1,12 +1,9 @@
 package org.nadojob.nadojobbackend.dto.company;
 
 import lombok.Data;
-import org.nadojob.nadojobbackend.dto.user.UserResponseDto;
-import org.nadojob.nadojobbackend.entity.Sector;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Data

@@ -7,10 +7,8 @@ import org.nadojob.nadojobbackend.dto.candidate_profile.CandidateProfileUpdateDt
 import org.nadojob.nadojobbackend.entity.CandidateProfile;
 import org.nadojob.nadojobbackend.entity.User;
 import org.nadojob.nadojobbackend.exception.CandidateProfileNotFoundException;
-import org.nadojob.nadojobbackend.exception.UserNotFoundException;
 import org.nadojob.nadojobbackend.mapper.CandidateProfileMapper;
 import org.nadojob.nadojobbackend.repository.CandidateProfileRepository;
-import org.nadojob.nadojobbackend.repository.UserRepository;
 import org.nadojob.nadojobbackend.validation.CandidateProfileValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

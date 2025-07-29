@@ -7,6 +7,7 @@ import org.nadojob.nadojobbackend.dto.company.AcceptInviteRequestDto;
 import org.nadojob.nadojobbackend.dto.company.CompanyCreationDto;
 import org.nadojob.nadojobbackend.dto.company.CompanyResponseDto;
 import org.nadojob.nadojobbackend.dto.company.CompanyUpdateDto;
+import org.nadojob.nadojobbackend.dto.email.EmailMessageDto;
 import org.nadojob.nadojobbackend.entity.Company;
 import org.nadojob.nadojobbackend.entity.CompanyInvite;
 import org.nadojob.nadojobbackend.entity.Sector;
@@ -16,6 +17,7 @@ import org.nadojob.nadojobbackend.mapper.CompanyMapper;
 import org.nadojob.nadojobbackend.repository.CompanyRepository;
 import org.nadojob.nadojobbackend.repository.SectorRepository;
 import org.nadojob.nadojobbackend.service.UserService;
+import org.nadojob.nadojobbackend.service.email.EmailService;
 import org.nadojob.nadojobbackend.validation.CompanyInviteValidator;
 import org.nadojob.nadojobbackend.validation.CompanyValidator;
 import org.springframework.data.domain.Page;
@@ -35,6 +37,8 @@ import static org.nadojob.nadojobbackend.entity.CompanyInviteStatus.ACCEPTED;
 @RequiredArgsConstructor
 public class CompanyService {
 
+    private static final String INVITE_SUBJECT_TEMPLATE = "Вам отправили приглашение стать участником компании: %s";
+    private static final String INVITE_BODY_TEMPLATE = "Код приглашения в команду: %s";
     private final CompanyRepository companyRepository;
     private final SectorRepository sectorRepository;
     private final CompanyMapper companyMapper;
@@ -42,6 +46,7 @@ public class CompanyService {
     private final CompanyInviteValidator companyInviteValidator;
     private final CompanyInviteService companyInviteService;
     private final UserService userService;
+    private final EmailService emailService;
 
     public Company create(CompanyCreationDto dto, User creator) {
         companyValidator.validateCompanyNameDuplicate(dto.getName());
@@ -53,7 +58,9 @@ public class CompanyService {
     public String inviteUserByEmail(String email, UUID ownerUserId) {
         companyInviteValidator.validateEmailNotExists(email);
         Company company = findByCurrentUserId(ownerUserId);
-        return companyInviteService.create(company, company.getCreatedBy(), email);
+        String inviteCode = companyInviteService.create(company, company.getCreatedBy(), email);
+        emailService.sendEmail(buildCompanyInviteEmail(email, company.getName(), inviteCode));
+        return inviteCode;
     }
 
     @Transactional
@@ -97,6 +104,14 @@ public class CompanyService {
         return companyRepository.findByCreatedById(userId).orElseThrow(
                 () -> new CompanyNotFoundException("Компания не найдена")
         );
+    }
+
+    private EmailMessageDto buildCompanyInviteEmail(String email, String companyName, String inviteCode) {
+        return EmailMessageDto.builder()
+                .to(email)
+                .subject(INVITE_SUBJECT_TEMPLATE.formatted(companyName))
+                .body(INVITE_BODY_TEMPLATE.formatted(inviteCode))
+                .build();
     }
 
 }

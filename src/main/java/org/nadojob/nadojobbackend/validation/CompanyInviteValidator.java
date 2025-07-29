@@ -2,11 +2,9 @@ package org.nadojob.nadojobbackend.validation;
 
 import lombok.RequiredArgsConstructor;
 import org.nadojob.nadojobbackend.entity.CompanyInvite;
-import org.nadojob.nadojobbackend.entity.CompanyInviteStatus;
 import org.nadojob.nadojobbackend.exception.InviteTokenExpiredException;
 import org.nadojob.nadojobbackend.exception.UserAlreadyInvitedException;
 import org.nadojob.nadojobbackend.repository.UserRepository;
-import org.nadojob.nadojobbackend.service.company.CompanyInviteService;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
